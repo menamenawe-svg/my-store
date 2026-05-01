@@ -1,26 +1,35 @@
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = [];
 
 function addToCart(name, price) {
-  cart.push({name, price});
+  cart.push({ name, price });
   localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Added to cart ✔");
+  alert(name + " added to cart");
 }
 
-function showCart() {
+function loadCart() {
+  let data = localStorage.getItem("cart");
+  cart = data ? JSON.parse(data) : [];
+
   let container = document.getElementById("cartItems");
-  let total = 0;
+  if (!container) return;
 
   container.innerHTML = "";
 
-  cart.forEach(item => {
+  cart.forEach((item, index) => {
     container.innerHTML += `
       <div class="item">
-        <p>${item.name}</p>
+        <h3>${item.name}</h3>
         <p>${item.price} EGP</p>
+        <button onclick="removeItem(${index})">Remove</button>
       </div>
     `;
-    total += item.price;
   });
-
-  document.getElementById("total").innerText = "Total: " + total + " EGP";
 }
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
+}
+
+window.onload = loadCart;
